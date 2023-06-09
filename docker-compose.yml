@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  data_injector:
+    container_name: data_injector
+    build:
+      context: ./data_injector
+      dockerfile: Dockerfile
+    environment:
+      KAGGLE_USERNAME: cesarmg16
+      KAGGLE_KEY: 95679ddadc3d01d19093de9f391085ef
+    depends_on:
+      - db
+    command: sh -c "python data_injector.py & tail -f /dev/null"
+  db:
+    container_name: db
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  dao:
+    container_name: dao
+    build:
+      context: ./dao
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+    command: sh -c "python dao.py & tail -f /dev/null"

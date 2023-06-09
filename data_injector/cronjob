@@ -1,0 +1,1 @@
+0 0 1,15 * * root python /app/data_injector.py >> /var/log/cron.log 2>&1
